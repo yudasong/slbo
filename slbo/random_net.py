@@ -28,7 +28,7 @@ class RandomNet(MultiLayerPerceptron):
         self.build()
 
     def build(self):
-        self.op_next_states = self.forward(self.op_states, self.op_actions)
+        self.op_features = self.forward(self.op_states, self.op_actions)
 
     def forward(self, states, actions):
         assert actions.shape[-1] == self.dim_action

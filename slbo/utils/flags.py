@@ -16,6 +16,10 @@ class FLAGS(BaseFLAGS):
     run_id: str = None
     algorithm = 'OLBO'  # possible options: OLBO, baseline, MF
 
+    class pc(BaseFLAGS):
+        bonus_scale = 0.01
+        lamb = 0.01
+
     class slbo(BaseFLAGS):
         n_iters = 20
         n_policy_iters = 10

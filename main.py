@@ -3,6 +3,8 @@ import pickle
 from collections import deque
 import tensorflow as tf
 import numpy as np
+from tqdm import tqdm
+
 import lunzi.nn as nn
 from lunzi.Logger import logger
 from slbo.utils.average_meter import AverageMeter
@@ -69,7 +71,8 @@ def main():
     model = DynamicsModel(dim_state, dim_action, normalizers, FLAGS.model.hidden_sizes)
     random_net = RandomNet(dim_state, dim_action, normalizers, FLAGS.model.hidden_sizes)
 
-    virt_env = VirtualEnv(model, make_env(FLAGS.env.id), random_net, FLAGS.plan.n_envs, opt_model=FLAGS.slbo.opt_model)
+    virt_env = VirtualEnv(model, make_env(FLAGS.env.id), random_net, FLAGS.plan.n_envs,FLAGS.model.hidden_sizes[-1], 
+                            FLAGS.pc.bonus_scale,FLAGS.pc.lamb, opt_model=FLAGS.slbo.opt_model)
     virt_runner = Runner(virt_env, **{**FLAGS.runner.as_dict(), 'max_steps': FLAGS.plan.max_steps})
 
     criterion_map = {
@@ -107,7 +110,7 @@ def main():
             n_samples += len(data)
         logger.warning('Loading %d samples from %s', n_samples, FLAGS.ckpt.buf_load)
 
-    max_ent_coef = FLAGS.TRPO.ent_coef
+    max_ent_coef = 0
 
     for T in range(FLAGS.slbo.n_stages):
         logger.info('------ Starting Stage %d --------', T)
@@ -126,6 +129,7 @@ def main():
         )
 
         returns = np.array([ep_info['return'] for ep_info in ep_infos])
+
         if len(returns) > 0:
             logger.info("episode: %s", np.mean(returns))
 
@@ -141,6 +145,8 @@ def main():
             normalizers.state.update(recent_train_set.state)
             normalizers.action.update(recent_train_set.action)
             normalizers.diff.update(recent_train_set.next_state - recent_train_set.state)
+
+        virt_env.update_cov(recent_train_set.state,recent_train_set.action)
 
         if T == 50:
             max_ent_coef = 0.
@@ -178,7 +184,7 @@ def main():
                 logger.info('# Iter %3d: Loss = [train = %.3f, dev = %.3f], after %d steps, grad_norm = %.6f',
                             i, np.mean(losses), loss, n_model_iters, grad_norm_meter.get())
 
-            for n_updates in range(FLAGS.slbo.n_policy_iters):
+            for n_updates in tqdm(range(FLAGS.slbo.n_policy_iters)):
                 if FLAGS.algorithm != 'MF' and FLAGS.slbo.start == 'buffer':
                     runners['train'].set_state(train_set.sample(FLAGS.plan.n_envs).state)
                 else:
@@ -188,10 +194,10 @@ def main():
                 advantages, values = runners['train'].compute_advantage(vfn, data)
                 dist_mean, dist_std, vf_loss = algo.train(max_ent_coef, data, advantages, values)
                 returns = [info['return'] for info in ep_infos]
-                logger.info('[TRPO] # %d: n_episodes = %d, returns: {mean = %.0f, std = %.0f}, '
-                            'dist std = %.10f, dist mean = %.10f, vf_loss = %.3f',
-                            n_updates, len(returns), np.mean(returns), np.std(returns) / np.sqrt(len(returns)),
-                            dist_std, dist_mean, vf_loss)
+                #logger.info('[TRPO] # %d: n_episodes = %d, returns: {mean = %.0f, std = %.0f}, '
+                #            'dist std = %.10f, dist mean = %.10f, vf_loss = %.3f',
+                #            n_updates, len(returns), np.mean(returns), np.std(returns) / np.sqrt(len(returns)),
+                #            dist_std, dist_mean, vf_loss)
 
         if T % FLAGS.ckpt.n_save_stages == 0:
             np.save(f'{FLAGS.log_dir}/stage-{T}', saver.state_dict())

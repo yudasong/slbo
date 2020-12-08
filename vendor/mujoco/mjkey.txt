@@ -1,0 +1,20 @@
+MuJoCo Pro Personal license activation key, number 75648, type 6.
+
+Issued to Sicheng Yang <sichengy@andrew.cmu.edu>.
+
+Expires November 25, 2021.
+
+This file activates MuJoCo Pro on a single computer with id:
+LINUX_SP6SDEX9_01TB2HBSE40270100H02323
+
+Do not modify this file. Its entire content, including the
+plain text section, is used by the activation manager.
+
+0ca412126dfe56507999fe3cad2448f1ad36e4a01c3035d46c2e961d19b6c650
+903927b4bdee584544df3d4f2562ae6c5aa6bc127691fdec6416bc9a19a7f50e
+0d275b8d24f76ebeacd34fc56b5266629ec114f003722dc23430d576f56f8fa5
+4d0c5cd39c2e5af586b47515f822329fd22fed920fc5e3b4b0dcda84bddfb5ff
+3a84d111c157548c873178c2672ca39ff2311033af6ec52eb71b2df018e55674
+42a36f8240766988e544744d2b0f2f10d02e72070b35aa4d67d9e4bf91bacfd8
+63fa3881543b1b22d6f480e44b480a991f5a57ee2d152d90432b2e77a82fe580
+f057c3d1966166af401364f8513a86c16c318c51899255343b3d5d674e07520e
