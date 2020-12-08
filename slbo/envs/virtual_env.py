@@ -2,13 +2,14 @@
 import numpy as np
 from gym.spaces import Box
 from slbo.dynamics_model import DynamicsModel
+from slbo.random_net import RandomNet
 from slbo.envs import BaseBatchedEnv, BaseModelBasedEnv
 
 
 class VirtualEnv(BaseBatchedEnv):
     _states: np.ndarray
 
-    def __init__(self, model: DynamicsModel, env: BaseModelBasedEnv, n_envs: int, opt_model=False):
+    def __init__(self, model: DynamicsModel, env: BaseModelBasedEnv, random_net:RandomNet,  n_envs: int, opt_model=False):
         super().__init__()
         self.n_envs = n_envs
         self.observation_space = env.observation_space  # ???
@@ -25,6 +26,7 @@ class VirtualEnv(BaseBatchedEnv):
         self._opt_model = opt_model
         self._model = model
         self._env = env
+        self._random_net = random_net
 
         self._states = np.zeros((self.n_envs, dim_state), dtype=np.float32)
 

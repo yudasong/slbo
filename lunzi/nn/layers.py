@@ -17,7 +17,7 @@ class Linear(Module):
         self.use_bias = bias
         with self.scope:
             self.op_input = tf.placeholder(dtype=tf.float32, shape=[None, in_features], name='input')
-            self.weight = Parameter(weight_initializer([in_features, out_features]), name='weight')
+            self.weight = Parameter(weight_initializer([in_features, out_features],dtype=tf.float32), name='weight')
             if bias:
                 self.bias = Parameter(tf.zeros([out_features], dtype=tf.float32), name='bias')
 

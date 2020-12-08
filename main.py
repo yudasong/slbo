@@ -19,6 +19,7 @@ from slbo.v_function.mlp_v_function import MLPVFunction
 from slbo.partial_envs import make_env
 from slbo.loss.multi_step_loss import MultiStepLoss
 from slbo.algos.TRPO import TRPO
+from slbo.random_net import RandomNet
 
 
 def evaluate(settings, tag):
@@ -66,8 +67,9 @@ def main():
     noise = OUNoise(env.action_space, theta=FLAGS.OUNoise.theta, sigma=FLAGS.OUNoise.sigma, shape=(1, dim_action))
     vfn = MLPVFunction(dim_state, [64, 64], normalizers.state)
     model = DynamicsModel(dim_state, dim_action, normalizers, FLAGS.model.hidden_sizes)
+    random_net = RandomNet(dim_state, dim_action, normalizers, FLAGS.model.hidden_sizes)
 
-    virt_env = VirtualEnv(model, make_env(FLAGS.env.id), FLAGS.plan.n_envs, opt_model=FLAGS.slbo.opt_model)
+    virt_env = VirtualEnv(model, make_env(FLAGS.env.id), random_net, FLAGS.plan.n_envs, opt_model=FLAGS.slbo.opt_model)
     virt_runner = Runner(virt_env, **{**FLAGS.runner.as_dict(), 'max_steps': FLAGS.plan.max_steps})
 
     criterion_map = {
