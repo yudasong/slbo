@@ -2,4 +2,6 @@
 env:
   id: HalfCheetah
 runner:
-  max_steps: 1000
+  max_steps: ENV_LENGTH
+plan:
+  max_steps: PLAN_LENGTH

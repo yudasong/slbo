@@ -1,5 +1,5 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
 env:
-  id: Hopper-v2
+  id: Hopper
 runner:
-  max_steps: 500
+  max_steps: 1000
