@@ -17,7 +17,7 @@ class FLAGS(BaseFLAGS):
     algorithm = 'OLBO'  # possible options: OLBO, baseline, MF
 
     class pc(BaseFLAGS):
-        bonus_scale = 0.01
+        bonus_scale = 0.05
         lamb = 0.01
 
     class slbo(BaseFLAGS):
