@@ -19,13 +19,14 @@ class FLAGS(BaseFLAGS):
     class pc(BaseFLAGS):
         bonus_scale = 0.05
         lamb = 0.01
+        bonus_stop_time= 50
 
     class slbo(BaseFLAGS):
         n_iters = 20
         n_policy_iters = 10
         n_model_iters = 100
         n_stages = 100
-        n_evaluate_iters = 10
+        n_evaluate_iters = 5
         opt_model = False
         start = 'reset'  # possibly 'buffer'
 

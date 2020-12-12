@@ -145,10 +145,10 @@ def main():
             normalizers.state.update(recent_train_set.state)
             normalizers.action.update(recent_train_set.action)
             normalizers.diff.update(recent_train_set.next_state - recent_train_set.state)
-
+        #print(recent_train_set.state.shape)
         virt_env.update_cov(recent_train_set.state,recent_train_set.action)
 
-        if T == 50:
+        if T == FLAGS.pc.bonus_stop_time:
             virt_env.bonus_scale = 0.
 
         for i in range(FLAGS.slbo.n_iters):
