@@ -54,7 +54,7 @@ class Continuous_MountainCarEnv(gym.Env):
         position = self.state[0]
         velocity = self.state[1]
         force = min(max(action[0], -1.0), 1.0)
-        reward = position
+        #reward = position
 
         velocity += force * self.power - 0.0025 * math.cos(3 * position)
         if (velocity > self.max_speed):
@@ -69,7 +69,7 @@ class Continuous_MountainCarEnv(gym.Env):
         if (position == self.min_position and velocity < 0):
             velocity = 0
 
-        """
+
         done = bool(position >= self.goal_position)
 
         reward = 0
@@ -77,8 +77,8 @@ class Continuous_MountainCarEnv(gym.Env):
             reward = 100.0
         reward -= math.pow(action[0], 2) * 0.1
 
-        """
-        done = False
+
+        #done = False
         self.state = np.array([position, velocity])
         return self.state, reward, done, {}
 
@@ -158,7 +158,8 @@ class Continuous_MountainCarEnv(gym.Env):
             actions = np.clip(actions, self.action_space.low,
                               self.action_space.high)
         rewards = - self.cost_np_vec(states, actions, next_states)
-        return rewards, np.zeros_like(rewards, dtype=np.bool)
+        dones = rewards > 0
+        return rewards, dones
 
     def cost_np_vec(self, obs, acts, next_obs):
         """
@@ -167,8 +168,15 @@ class Continuous_MountainCarEnv(gym.Env):
         force = min(max(action[0], -1.0), 1.0)
         reward = position
         """
-        position = obs[:, 0]
-        return -position
+        positions = next_obs[:,0]
+        rewards = np.zeros(len(positions))
+        for i in range(len(rewards)):
+            if positions[i] >= self.goal_position:
+                rewards[i] = 100.0
+
+        rewards = rewards - np.power(acts[:,0], 2) * 0.1
+
+        return -rewards
 
     def verify(self, n=2000, eps=1e-4):
         dataset = Dataset(gen_dtype(self, 'state action next_state reward done'), n)
