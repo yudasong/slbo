@@ -17,15 +17,16 @@ class FLAGS(BaseFLAGS):
     algorithm = 'OLBO'  # possible options: OLBO, baseline, MF
 
     class pc(BaseFLAGS):
-        bonus_scale = 0.05
+        bonus_scale = 0.1
         lamb = 0.01
+        bonus_stop_time= 30
 
     class slbo(BaseFLAGS):
-        n_iters = 20
+        n_iters = 50
         n_policy_iters = 10
         n_model_iters = 100
         n_stages = 100
-        n_evaluate_iters = 10
+        n_evaluate_iters = 5
         opt_model = False
         start = 'reset'  # possibly 'buffer'
 
@@ -46,7 +47,7 @@ class FLAGS(BaseFLAGS):
     class rollout(BaseFLAGS):
         normalizer = 'policy'
         max_buf_size = 100000
-        n_train_samples = 2000
+        n_train_samples = 4000
         n_dev_samples = 0
         n_test_samples = 10000
 

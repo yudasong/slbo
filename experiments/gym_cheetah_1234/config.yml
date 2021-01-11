@@ -9,7 +9,7 @@ PPO:
   n_opt_epochs: 10
 TRPO:
   cg_damping: 0.1
-  ent_coef: 0.005
+  ent_coef: 0
   max_kl: 0.01
   n_cg_iters: 10
   n_vf_iters: 5
@@ -23,7 +23,7 @@ ckpt:
   n_save_stages: 10
   policy_load: null
   warm_up: null
-commit: 89f2d7477d2e77774a2ce85af8e0d0ff7d31654a
+commit: fb7d8e56a1b17608bdba1786371d1766bc2c8a3f
 env:
   id: HalfCheetah
 log_dir: ./experiments/gym_cheetah_1234
@@ -41,7 +41,8 @@ model:
   validation_freq: 1
   weight_decay: 1.0e-05
 pc:
-  bonus_scale: 0.05
+  bonus_scale: 0.1
+  bonus_stop_time: 30
   lamb: 0.01
 plan:
   max_steps: 1000
@@ -54,9 +55,9 @@ policy:
   init_std: 1.0
 rollout:
   max_buf_size: 100000
-  n_dev_samples: 2000
+  n_dev_samples: 4000
   n_test_samples: 10000
-  n_train_samples: 2000
+  n_train_samples: 4000
   normalizer: policy
 run_id: null
 runner:
@@ -65,11 +66,11 @@ runner:
   max_steps: 1000
 seed: 1234
 slbo:
-  n_evaluate_iters: 10
+  n_evaluate_iters: 5
   n_iters: 20
   n_model_iters: 100
   n_policy_iters: 40
-  n_stages: 100
+  n_stages: 50
   opt_model: false
   start: reset
 use_prev: true

@@ -25,12 +25,18 @@ from slbo.random_net import RandomNet
 
 
 def evaluate(settings, tag):
+    return_means = []
     for runner, policy, name in settings:
         runner.reset()
         _, ep_infos = runner.run(policy, FLAGS.rollout.n_test_samples)
         returns = np.array([ep_info['return'] for ep_info in ep_infos])
         logger.info('Tag = %s, Reward on %s (%d episodes): mean = %.6f, std = %.6f', tag, name,
                     len(returns), np.mean(returns), np.std(returns))
+
+        return_means.append(np.mean(returns))
+
+    return return_means
+
 
 
 def add_multi_step(src: Dataset, dst: Dataset):
@@ -98,6 +104,9 @@ def main():
     saver = nn.ModuleDict({'policy': policy, 'model': model, 'vfn': vfn})
     print(saver)
 
+    eval_real_returns = []
+    timesteps = []
+
     if FLAGS.ckpt.model_load:
         saver.load_state_dict(np.load(FLAGS.ckpt.model_load)[()])
         logger.warning('Load model from %s', FLAGS.ckpt.model_load)
@@ -114,7 +123,9 @@ def main():
 
     for T in range(FLAGS.slbo.n_stages):
         logger.info('------ Starting Stage %d --------', T)
-        evaluate(settings, 'episode')
+        eval_returns = evaluate(settings, 'episode')
+        eval_real_returns.append(eval_returns[0])
+        timesteps.append(T*FLAGS.rollout.n_train_samples)
 
         if not FLAGS.use_prev:
             train_set.clear()
@@ -145,18 +156,18 @@ def main():
             normalizers.state.update(recent_train_set.state)
             normalizers.action.update(recent_train_set.action)
             normalizers.diff.update(recent_train_set.next_state - recent_train_set.state)
-
+        #print(recent_train_set.state.shape)
         virt_env.update_cov(recent_train_set.state,recent_train_set.action)
 
-        if T == 50:
+        if T == FLAGS.pc.bonus_stop_time:
             virt_env.bonus_scale = 0.
 
         for i in range(FLAGS.slbo.n_iters):
-            if i % FLAGS.slbo.n_evaluate_iters == 0 and i != 0:
+            #if i % FLAGS.slbo.n_evaluate_iters == 0 and i != 0:
                 # cur_actions = policy.eval('actions_mean actions_std', states=recent_states)
                 # kl_old_new = gaussian_kl(*ref_actions, *cur_actions).sum(axis=1).mean()
                 # logger.info('KL(old || cur) = %.6f', kl_old_new)
-                evaluate(settings, 'iteration')
+            #    evaluate(settings, 'iteration')
 
             losses = deque(maxlen=FLAGS.slbo.n_model_iters)
             grad_norm_meter = AverageMeter()
@@ -204,6 +215,12 @@ def main():
             np.save(f'{FLAGS.log_dir}/final', saver.state_dict())
         if FLAGS.ckpt.n_save_stages == 1:
             pickle.dump(recent_train_set, open(f'{FLAGS.log_dir}/stage-{T}.inc-buf.pkl', 'wb'))
+
+    eval_returns = evaluate(settings, 'episode')
+    eval_real_returns.append(eval_returns[0])
+    timesteps.append(T*FLAGS.rollout.n_train_samples)
+    np.save(f'{FLAGS.log_dir}/eval_real_returns', eval_real_returns)
+    np.save(f'{FLAGS.log_dir}/timesteps', timesteps)
 
 
 if __name__ == '__main__':

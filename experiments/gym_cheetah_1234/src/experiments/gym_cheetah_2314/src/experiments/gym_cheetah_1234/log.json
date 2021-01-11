@@ -1,1 +1,1 @@
-{"level": "info", "fmt": "log_dir = %s", "args": ["./experiments/gym_cheetah_1234"], "caller": "slbo/utils/flags.py:160", "time": "2020-12-10T22:38:55.958298"}
+{"level": "info", "fmt": "log_dir = %s", "args": ["./experiments/gym_cheetah_1234"], "caller": "slbo/utils/flags.py:160", "time": "2020-12-10T22:39:49.493757"}

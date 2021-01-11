@@ -120,7 +120,8 @@ def main():
         logger.warning('Loading %d samples from %s', n_samples, FLAGS.ckpt.buf_load)
 
     max_ent_coef = 0
-
+    print("!!!!!!!!")
+    print(virt_env.bonus_scale)
     for T in range(FLAGS.slbo.n_stages):
         logger.info('------ Starting Stage %d --------', T)
         eval_returns = evaluate(settings, 'episode')
