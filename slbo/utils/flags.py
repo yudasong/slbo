@@ -17,7 +17,7 @@ class FLAGS(BaseFLAGS):
     algorithm = 'OLBO'  # possible options: OLBO, baseline, MF
 
     class pc(BaseFLAGS):
-        bonus_scale = 0.1
+        bonus_scale = 1
         lamb = 0.01
         bonus_stop_time= 30
 
@@ -118,14 +118,10 @@ class FLAGS(BaseFLAGS):
 
         import numpy as np
         import tensorflow as tf
-        import torch
         import random
         np.random.seed(cls.seed)
         tf.set_random_seed(np.random.randint(2**30))
-        torch.manual_seed(np.random.randint(2**30))
         random.seed(np.random.randint(2**30))
-        torch.cuda.manual_seed_all(np.random.randint(2**30))
-        torch.backends.cudnn.deterministic = True
 
     @classmethod
     def finalize(cls):

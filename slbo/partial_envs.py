@@ -1,5 +1,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
 import numpy as np
+
+from gym.wrappers import FlattenObservation
+
+
 from slbo.envs.bm_envs.gym.half_cheetah import HalfCheetahEnv
 from slbo.envs.bm_envs.gym.walker2d import Walker2dEnv
 # from slbo.envs.mujoco.humanoid_env import HumanoidEnv
@@ -30,10 +34,12 @@ from slbo.envs.bm_envs.gym import gym_cartpoleO001
 from slbo.envs.bm_envs.gym import gym_humanoid
 from slbo.envs.bm_envs.gym import gym_nostopslimhumanoid
 from slbo.envs.bm_envs.gym import gym_slimhumanoid
+from slbo.envs.robotics.fetch.push import FetchPushEnv
 
 
 def make_env(id: str):
     envs = {
+        'FetchPush': FetchPushEnv,
         'HalfCheetah': HalfCheetahEnv,
         'Walker2D': Walker2dEnv,
         'Ant': AntEnv,
@@ -71,4 +77,7 @@ def make_env(id: str):
     if not hasattr(env, 'metadata'):
         env.metadata = {}
     env.seed(np.random.randint(2**60))
+    if 'Fetch' in id:
+        env = FlattenObservation(env)
+
     return env

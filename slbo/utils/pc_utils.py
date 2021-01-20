@@ -1,4 +1,3 @@
-import torch
 import numpy as np
 import copy
 import os
@@ -45,13 +44,6 @@ def discount_cumsum(x, discount):
 
 
 
-def denormalize(ob_rms, state):
-    var = ob_rms.var
-    #print(var)
-    return torch.FloatTensor(state.data.numpy() * np.sqrt(var) + ob_rms.mean)
-
-def normalize(ob_rms, state):
-    return torch.FloatTensor((state.data.numpy() - ob_rms.mean) / np.sqrt(ob_rms.var))
 
 def soft_update_from_to(source, target, tau):
     for target_param, param in zip(target.parameters(), source.parameters()):
@@ -64,47 +56,3 @@ def copy_model_params_from_to(source, target):
         target_param.data.copy_(param.data)
 
 
-def save(dynamics, timestep_list, reward_list, bonus_list, loss_list, cov, sigma, args):
-
-    save_path = "trained_models/{}/{}_{}_{}_{}".format(args.env_name, args.phi_dim, args.bonus_scale, args.lamb, args.sample_size, args.plan_horizen)
-    if args.use_v_net:
-        save_path += "_vnet"
-    if args.normalize:
-        save_path += "_norm"
-    if args.no_bonus:
-        save_path += "_no_bonus"
-    try:
-        os.makedirs(save_path)
-    except OSError:
-        pass
-    torch.save(
-        dynamics, os.path.join(
-        save_path ,
-        "{}.pt".format(str(args.seed))))
-
-    np.save(
-        os.path.join(
-        save_path ,
-        "cov_{}".format(str(args.seed))),
-        [cov,sigma])
-
-
-    save_path = "data/{}/{}_{}_{}_{}_{}_{}".format(args.env_name, 
-        args.phi_dim, args.bonus_scale, args.lamb, args.buffer_width, 
-        args.plan_horizen, args.lr, args.v_lr)
-    if args.use_v_net:
-        save_path += "_vnet"
-    if args.normalize:
-        save_path += "_norm"
-    if args.no_bonus:
-        save_path += "_no_bonus"
-    try:
-        os.makedirs(save_path)
-    except OSError:
-        pass
-
-
-    np.save(save_path+"/ts_{}".format(str(args.seed)),timestep_list)
-    np.save(save_path+"/rw_{}".format(str(args.seed)),reward_list)
-    np.save(save_path+"/bonus_{}".format(str(args.seed)),bonus_list)
-    np.save(save_path+"/loss_{}".format(str(args.seed)),loss_list)
