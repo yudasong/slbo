@@ -2,7 +2,7 @@ import os
 import numpy as np
 
 from gym import utils
-from gym.envs.robotics import hand_env
+from slbo.envs.robotics import hand_env
 from gym.envs.robotics.utils import robot_get_obs
 
 
@@ -59,7 +59,7 @@ class HandReachEnv(hand_env.HandEnv, utils.EzPickle):
     ):
         utils.EzPickle.__init__(**locals())
         self.distance_threshold = distance_threshold
-        self.reward_type = reward_type
+        self.reward_type = 'sparse'
 
         hand_env.HandEnv.__init__(
             self, MODEL_XML_PATH, n_substeps=n_substeps, initial_qpos=initial_qpos,
@@ -81,6 +81,13 @@ class HandReachEnv(hand_env.HandEnv, utils.EzPickle):
 
     # RobotEnv methods
     # ----------------------------
+
+    def mb_step(self, states, actions, next_states):
+        a = next_states[:,:15]
+        b = next_states[:,15:30]
+        d = np.linalg.norm(a - b, axis=-1)
+        rewards = -(d > self.distance_threshold).astype(np.float32) 
+        return rewards, np.zeros_like(rewards, dtype=np.bool)
 
     def _env_setup(self, initial_qpos):
         for name, value in initial_qpos.items():

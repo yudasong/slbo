@@ -35,11 +35,13 @@ from slbo.envs.bm_envs.gym import gym_humanoid
 from slbo.envs.bm_envs.gym import gym_nostopslimhumanoid
 from slbo.envs.bm_envs.gym import gym_slimhumanoid
 from slbo.envs.robotics.fetch.push import FetchPushEnv
+from slbo.envs.robotics.hand.reach import HandReachEnv
 
 
 def make_env(id: str):
     envs = {
         'FetchPush': FetchPushEnv,
+        'HandReach': HandReachEnv,
         'HalfCheetah': HalfCheetahEnv,
         'Walker2D': Walker2dEnv,
         'Ant': AntEnv,
@@ -77,7 +79,7 @@ def make_env(id: str):
     if not hasattr(env, 'metadata'):
         env.metadata = {}
     env.seed(np.random.randint(2**60))
-    if 'Fetch' in id:
+    if 'Fetch' in id or 'Hand' in id: 
         env = FlattenObservation(env)
 
     return env

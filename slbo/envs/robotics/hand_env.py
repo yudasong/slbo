@@ -50,3 +50,6 @@ class HandEnv(robot_env.RobotEnv):
 
     def render(self, mode='human', width=500, height=500):
         return super(HandEnv, self).render(mode, width, height)
+
+    def verify(self):
+        pass
