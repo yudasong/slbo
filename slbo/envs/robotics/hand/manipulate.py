@@ -4,6 +4,10 @@ import numpy as np
 from gym import utils, error
 from gym.envs.robotics import rotations, hand_env
 from gym.envs.robotics.utils import robot_get_obs
+from gym.wrappers import FlattenObservation
+
+
+from slbo.utils.dataset import Dataset, gen_dtype
 
 try:
     import mujoco_py
@@ -290,6 +294,37 @@ class HandEggEnv(ManipulateEnv, utils.EzPickle):
             target_rotation=target_rotation,
             target_position_range=np.array([(-0.04, 0.04), (-0.06, 0.02), (0.0, 0.06)]),
             reward_type=reward_type)
+
+
+    def verify(self, n=2000, eps=1e-4):
+        dummy = FlattenObservation(self)
+
+        dataset = Dataset(gen_dtype(dummy, 'state action next_state reward done'), n)
+        state = dummy.reset()
+        #print(state)
+        for _ in range(n):
+            action = dummy.action_space.sample()
+            next_state, reward, done, _ = dummy.step(action)
+            dataset.append((state, action, next_state, reward, done))
+
+            state = next_state
+            if done:
+                state = dummy.reset()
+
+        rewards_, dones_ = self.mb_step(dataset.state, dataset.action, dataset.next_state)
+        diff = dataset.reward - rewards_
+        l_inf = np.abs(diff).max()
+        # logger.info('rewarder difference: %.6f', l_inf)
+
+        assert np.allclose(dones_, dataset.done)
+        assert l_inf < eps
+
+    def mb_step(self, states, actions, next_states):
+        a = next_states[:,:7]
+        b = next_states[:,7:14]
+        d = np.linalg.norm(a - b, axis=-1)
+        rewards = -(d > self.distance_threshold).astype(np.float32) 
+        return rewards, np.zeros_like(rewards, dtype=np.bool)
 
 
 class HandPenEnv(ManipulateEnv, utils.EzPickle):

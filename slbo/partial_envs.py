@@ -36,10 +36,12 @@ from slbo.envs.bm_envs.gym import gym_nostopslimhumanoid
 from slbo.envs.bm_envs.gym import gym_slimhumanoid
 from slbo.envs.robotics.fetch.push import FetchPushEnv
 from slbo.envs.robotics.hand.reach import HandReachEnv
+from slbo.envs.robotics.hand.manipulate import HandEggEnv
 
 
 def make_env(id: str):
     envs = {
+        'HandEgg': HandEggEnv,
         'FetchPush': FetchPushEnv,
         'HandReach': HandReachEnv,
         'HalfCheetah': HalfCheetahEnv,
@@ -73,6 +75,7 @@ def make_env(id: str):
         'gym_slimhumanoid': gym_slimhumanoid.HumanoidEnv,
         'gym_nostopslimhumanoid': gym_nostopslimhumanoid.HumanoidEnv,
     }
+    
     env = envs[id]()
     if not hasattr(env, 'reward_range'):
         env.reward_range = (-np.inf, np.inf)
