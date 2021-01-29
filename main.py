@@ -160,8 +160,8 @@ def main():
         #print(recent_train_set.state.shape)
         virt_env.update_cov(recent_train_set.state,recent_train_set.action)
 
-        if T == FLAGS.pc.bonus_stop_time:
-            virt_env.bonus_scale = 0.
+        #if T == FLAGS.pc.bonus_stop_time:
+        #    virt_env.bonus_scale = 0.
 
         for i in range(FLAGS.slbo.n_iters):
             #if i % FLAGS.slbo.n_evaluate_iters == 0 and i != 0:

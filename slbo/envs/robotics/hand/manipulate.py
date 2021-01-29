@@ -287,7 +287,7 @@ class HandBlockEnv(ManipulateEnv, utils.EzPickle):
 
 
 class HandEggEnv(ManipulateEnv, utils.EzPickle):
-    def __init__(self, target_position='random', target_rotation='xyz', reward_type='sparse'):
+    def __init__(self, target_position='random', target_rotation='xyz', reward_type='dense'):
         utils.EzPickle.__init__(self, target_position, target_rotation, reward_type)
         ManipulateEnv.__init__(self,
             model_path=MANIPULATE_EGG_XML, target_position=target_position,
@@ -322,8 +322,14 @@ class HandEggEnv(ManipulateEnv, utils.EzPickle):
     def mb_step(self, states, actions, next_states):
         a = next_states[:,:7]
         b = next_states[:,7:14]
-        d = np.linalg.norm(a - b, axis=-1)
-        rewards = -(d > self.distance_threshold).astype(np.float32) 
+        if self.reward_type == 'sparse':
+            success = self._is_success(a, b).astype(np.float32)
+            rewards = (success - 1.)
+        else:
+            d_pos, d_rot = self._goal_distance(a, b)
+            # We weigh the difference in position to avoid that `d_pos` (in meters) is completely
+            # dominated by `d_rot` (in radians).
+            rewards = -(10. * d_pos + d_rot)
         return rewards, np.zeros_like(rewards, dtype=np.bool)
 
 
