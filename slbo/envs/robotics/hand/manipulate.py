@@ -124,7 +124,7 @@ class ManipulateEnv(hand_env.HandEnv):
     def compute_reward(self, achieved_goal, goal, info):
         if self.reward_type == 'sparse':
             success = self._is_success(achieved_goal, goal).astype(np.float32)
-            return (success - 1.)
+            return success 
         else:
             d_pos, d_rot = self._goal_distance(achieved_goal, goal)
             # We weigh the difference in position to avoid that `d_pos` (in meters) is completely
@@ -238,7 +238,7 @@ class ManipulateEnv(hand_env.HandEnv):
             axis = self.np_random.uniform(-1., 1., size=3)
             target_quat = quat_from_angle_and_axis(angle, axis)
         elif self.target_rotation in ['ignore', 'fixed']:
-            target_quat = self.sim.data.get_joint_qpos('object:joint')
+            target_quat = self.sim.data.get_joint_qpos('object:joint')[3:]
         else:
             raise error.Error('Unknown target_rotation option "{}".'.format(self.target_rotation))
         assert target_quat is not None
@@ -287,7 +287,7 @@ class HandBlockEnv(ManipulateEnv, utils.EzPickle):
 
 
 class HandEggEnv(ManipulateEnv, utils.EzPickle):
-    def __init__(self, target_position='random', target_rotation='xyz', reward_type='dense'):
+    def __init__(self, target_position='random', target_rotation='fixed', reward_type='sparse'):
         utils.EzPickle.__init__(self, target_position, target_rotation, reward_type)
         ManipulateEnv.__init__(self,
             model_path=MANIPULATE_EGG_XML, target_position=target_position,
@@ -324,7 +324,7 @@ class HandEggEnv(ManipulateEnv, utils.EzPickle):
         b = next_states[:,7:14]
         if self.reward_type == 'sparse':
             success = self._is_success(a, b).astype(np.float32)
-            rewards = (success - 1.)
+            rewards = (success * 10 - 1.)
         else:
             d_pos, d_rot = self._goal_distance(a, b)
             # We weigh the difference in position to avoid that `d_pos` (in meters) is completely

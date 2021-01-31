@@ -29,7 +29,10 @@ def evaluate(settings, tag):
     for runner, policy, name in settings:
         runner.reset()
         _, ep_infos = runner.run(policy, FLAGS.rollout.n_test_samples)
-        returns = np.array([ep_info['return'] for ep_info in ep_infos])
+        if name == 'Real Env':
+            returns = np.array([ep_info['success'] for ep_info in ep_infos])
+        else:
+            returns = np.array([ep_info['return'] for ep_info in ep_infos])
         logger.info('Tag = %s, Reward on %s (%d episodes): mean = %.6f, std = %.6f', tag, name,
                     len(returns), np.mean(returns), np.std(returns))
 
@@ -62,7 +65,7 @@ def main():
     dim_state = int(np.prod(env.observation_space.shape))
     dim_action = int(np.prod(env.action_space.shape))
 
-    env.verify()
+    # env.verify()
 
     normalizers = Normalizers(dim_action=dim_action, dim_state=dim_state)
 

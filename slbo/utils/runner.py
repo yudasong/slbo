@@ -64,7 +64,7 @@ class Runner(object):
                 next_states = next_states.copy()
                 next_states[indices] = self.env.partial_reset(indices)
                 for index in indices:
-                    infos[index]['episode'] = {'return': self._returns[index]}
+                    infos[index]['episode'] = {'return': self._returns[index], 'success': (self._returns[index] > 0)}
                 self._n_steps[indices] = 0
                 self._returns[indices] = 0.
 
