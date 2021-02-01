@@ -85,8 +85,11 @@ class HandReachEnv(hand_env.HandEnv, utils.EzPickle):
     def mb_step(self, states, actions, next_states):
         a = next_states[:,:15]
         b = next_states[:,15:30]
-        d = np.linalg.norm(a - b, axis=-1)
-        rewards = -(d > self.distance_threshold).astype(np.float32) 
+        d = goal_distance(achieved_goal, goal)
+        if self.reward_type == 'sparse':
+            rewards =  -(d > self.distance_threshold).astype(np.float32)
+        else:
+            rewards =  -d
         return rewards, np.zeros_like(rewards, dtype=np.bool)
 
     def _env_setup(self, initial_qpos):

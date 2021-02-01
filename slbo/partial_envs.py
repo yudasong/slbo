@@ -1,6 +1,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
 import numpy as np
 
+import gym
+import slbo.envs.mujoco_maze
+
 from gym.wrappers import FlattenObservation
 
 
@@ -40,49 +43,53 @@ from slbo.envs.robotics.hand.manipulate import HandEggEnv
 
 
 def make_env(id: str):
-    envs = {
-        'HandEgg': HandEggEnv,
-        'FetchPush': FetchPushEnv,
-        'HandReach': HandReachEnv,
-        'HalfCheetah': HalfCheetahEnv,
-        'Walker2D': Walker2dEnv,
-        'Ant': AntEnv,
-        'Hopper': HopperEnv,
-        'Swimmer': SwimmerEnv,
-        'FixedSwimmer': gym_fswimmer.fixedSwimmerEnv,
-        'FixedWalker': gym_fwalker2d.Walker2dEnv,
-        'FixedHopper': gym_fhopper.HopperEnv,
-        'FixedAnt': gym_fant.AntEnv,
-        'Reacher': ReacherEnv,
-        'Pendulum': PendulumEnv,
-        'InvertedPendulum': InvertedPendulumEnv,
-        'Acrobot': AcrobotEnv,
-        'CartPole': CartPoleEnv,
-        'MountainCar': Continuous_MountainCarEnv,
+    if "Point" in id:
+        env = gym.make(id)
+        env.seed(np.random.randint(2**60))
+    else:
+        envs = {
+            'HandEgg': HandEggEnv,
+            'FetchPush': FetchPushEnv,
+            'HandReach': HandReachEnv,
+            'HalfCheetah': HalfCheetahEnv,
+            'Walker2D': Walker2dEnv,
+            'Ant': AntEnv,
+            'Hopper': HopperEnv,
+            'Swimmer': SwimmerEnv,
+            'FixedSwimmer': gym_fswimmer.fixedSwimmerEnv,
+            'FixedWalker': gym_fwalker2d.Walker2dEnv,
+            'FixedHopper': gym_fhopper.HopperEnv,
+            'FixedAnt': gym_fant.AntEnv,
+            'Reacher': ReacherEnv,
+            'Pendulum': PendulumEnv,
+            'InvertedPendulum': InvertedPendulumEnv,
+            'Acrobot': AcrobotEnv,
+            'CartPole': CartPoleEnv,
+            'MountainCar': Continuous_MountainCarEnv,
 
-        'HalfCheetahO01': gym_cheetahO01.HalfCheetahEnv,
-        'HalfCheetahO001': gym_cheetahO001.HalfCheetahEnv,
-        'HalfCheetahA01': gym_cheetahA01.HalfCheetahEnv,
-        'HalfCheetahA003': gym_cheetahA003.HalfCheetahEnv,
+            'HalfCheetahO01': gym_cheetahO01.HalfCheetahEnv,
+            'HalfCheetahO001': gym_cheetahO001.HalfCheetahEnv,
+            'HalfCheetahA01': gym_cheetahA01.HalfCheetahEnv,
+            'HalfCheetahA003': gym_cheetahA003.HalfCheetahEnv,
 
-        'PendulumO01': gym_pendulumO01.PendulumEnv,
-        'PendulumO001': gym_pendulumO001.PendulumEnv,
+            'PendulumO01': gym_pendulumO01.PendulumEnv,
+            'PendulumO001': gym_pendulumO001.PendulumEnv,
 
-        'CartPoleO01': gym_cartpoleO01.CartPoleEnv,
-        'CartPoleO001': gym_cartpoleO001.CartPoleEnv,
+            'CartPoleO01': gym_cartpoleO01.CartPoleEnv,
+            'CartPoleO001': gym_cartpoleO001.CartPoleEnv,
 
-        'gym_humanoid': gym_humanoid.HumanoidEnv,
-        'gym_slimhumanoid': gym_slimhumanoid.HumanoidEnv,
-        'gym_nostopslimhumanoid': gym_nostopslimhumanoid.HumanoidEnv,
-    }
-    
-    env = envs[id]()
-    if not hasattr(env, 'reward_range'):
-        env.reward_range = (-np.inf, np.inf)
-    if not hasattr(env, 'metadata'):
-        env.metadata = {}
-    env.seed(np.random.randint(2**60))
-    if 'Fetch' in id or 'Hand' in id: 
-        env = FlattenObservation(env)
+            'gym_humanoid': gym_humanoid.HumanoidEnv,
+            'gym_slimhumanoid': gym_slimhumanoid.HumanoidEnv,
+            'gym_nostopslimhumanoid': gym_nostopslimhumanoid.HumanoidEnv,
+        }
+        
+        env = envs[id]()
+        if not hasattr(env, 'reward_range'):
+            env.reward_range = (-np.inf, np.inf)
+        if not hasattr(env, 'metadata'):
+            env.metadata = {}
+        env.seed(np.random.randint(2**60))
+        if 'Fetch' in id or 'Hand' in id: 
+            env = FlattenObservation(env)
 
     return env
