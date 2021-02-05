@@ -372,6 +372,7 @@ class MazeEnv(gym.Env):
         ]
 
     def step(self, action: np.ndarray) -> Tuple[np.ndarray, float, bool, dict]:
+        action = np.clip(action, self.action_space.low, self.action_space.high)
         self.t += 1
         if self.wrapped_env.MANUAL_COLLISION:
             old_pos = self.wrapped_env.get_xy()
@@ -414,10 +415,19 @@ class MazeEnv(gym.Env):
         for i in range(len(next_states)):
             rewards.append(self._task.reward(next_states[i]))
             dones.append(self._task.termination(next_states[i]))
-        return np.array(rewards), np.array(dones, dtype=np.bool)
+        inner_rewards = np.linalg.norm((states[:,:2] - next_states[:,:2])/self.wrapped_env.dt,axis=-1)
+        reward_ctrl = self.wrapped_env._ctrl_cost_weight * np.sum(np.square(actions), axis=-1)
+        #print(inner_.rewards)
+        rewards = np.array(rewards)
+        assert rewards.shape == inner_rewards.shape
+        assert inner_rewards.shape == reward_ctrl.shape
+        rewards = rewards + self._inner_reward_scaling * (inner_rewards - reward_ctrl)
+        #print(rewards)
+        return rewards, np.array(dones, dtype=np.bool)
 
 
     def verify(self, n=2000, eps=1e-4):
+        print(self._inner_reward_scaling)
         dataset = Dataset(gen_dtype(self, 'state action next_state reward done'), n)
         state = self.reset()
         for _ in range(n):
@@ -430,9 +440,10 @@ class MazeEnv(gym.Env):
                 state = self.reset()
 
         rewards_, dones_ = self.mb_step(dataset.state, dataset.action, dataset.next_state)
+        print(dataset.reward)
         diff = dataset.reward - rewards_
         l_inf = np.abs(diff).max()
-        #logger.info('rewarder difference: %.6f', l_inf)
+        print('rewarder difference: %.6f', l_inf)
 
         assert np.allclose(dones_, dataset.done)
         assert l_inf < eps

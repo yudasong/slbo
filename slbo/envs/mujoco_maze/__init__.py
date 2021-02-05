@@ -37,7 +37,7 @@ for maze_id in TaskRegistry.keys():
             # Ant
             gym.envs.register(
                 id=f"Ant{maze_id}-v{i}",
-                entry_point="mujoco_maze.maze_env:MazeEnv",
+                entry_point="slbo.envs.mujoco_maze.maze_env:MazeEnv",
                 kwargs=dict(
                     model_cls=AntEnv,
                     maze_task=task_cls,

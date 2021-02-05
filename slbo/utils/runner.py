@@ -36,7 +36,7 @@ class Runner(object):
     def get_state(self):
         return self._states.copy()
 
-    def run(self, policy: BasePolicy, n_samples: int):
+    def run(self, policy: BasePolicy, n_samples: int, render=False):
         ep_infos = []
         n_steps = n_samples // self.n_envs
         assert n_steps * self.n_envs == n_samples
@@ -51,6 +51,9 @@ class Runner(object):
                 actions = unscaled_actions
 
             next_states, rewards, dones, infos = self.env.step(actions)
+            if render:
+                #print(actions)
+                self.env.render()
             dones = dones.astype(bool)
             self._returns += rewards
             self._n_steps += 1
@@ -64,12 +67,15 @@ class Runner(object):
                 next_states = next_states.copy()
                 next_states[indices] = self.env.partial_reset(indices)
                 for index in indices:
-                    infos[index]['episode'] = {'return': self._returns[index], 'success': (self._returns[index] > 0)}
+                    infos[index]['episode'] = {'return': self._returns[index], 'success': (self._returns[index] > 50)}
                 self._n_steps[indices] = 0
                 self._returns[indices] = 0.
 
             self._states = next_states.copy()
             ep_infos.extend([info['episode'] for info in infos if 'episode' in info])
+
+        if render:
+            self.env.close()
 
         return dataset, ep_infos
 

@@ -43,7 +43,7 @@ from slbo.envs.robotics.hand.manipulate import HandEggEnv
 
 
 def make_env(id: str):
-    if "Point" in id:
+    if "Point" in id or "Ant" in id:
         env = gym.make(id)
         env.seed(np.random.randint(2**60))
     else:

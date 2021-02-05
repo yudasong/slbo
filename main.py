@@ -136,7 +136,7 @@ def main():
             dev_set.clear()
 
         # collect data
-        recent_train_set, ep_infos = runners['collect'].run(policy, FLAGS.rollout.n_train_samples)
+        recent_train_set, ep_infos = runners['collect'].run(policy, FLAGS.rollout.n_train_samples, render=False)
         add_multi_step(recent_train_set, train_set)
         add_multi_step(
             runners['dev'].run(policy, FLAGS.rollout.n_dev_samples)[0],
