@@ -5,3 +5,6 @@ runner:
   max_steps: 1000
 plan:
   max_steps: 1000
+pc: 
+  bonus_scale: 0.1  
+
