@@ -200,7 +200,12 @@ def main():
                             i, np.mean(losses), loss, n_model_iters, grad_norm_meter.get())
 
             for n_updates in tqdm(range(FLAGS.slbo.n_policy_iters)):
-                if FLAGS.algorithm != 'MF' and FLAGS.slbo.start == 'buffer':
+                # if FLAGS.algorithm != 'MF' and FLAGS.slbo.start == 'buffer':
+                #     runners['train'].set_state(train_set.sample(FLAGS.plan.n_envs).state)
+                # else:
+                #     runners['train'].reset()
+
+                if np.random.rand() > 0.5:
                     runners['train'].set_state(train_set.sample(FLAGS.plan.n_envs).state)
                 else:
                     runners['train'].reset()
