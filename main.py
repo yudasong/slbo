@@ -205,7 +205,7 @@ def main():
                 # else:
                 #     runners['train'].reset()
 
-                if np.random.rand() > 0.5:
+                if np.random.rand() > 0.8:
                     runners['train'].set_state(train_set.sample(FLAGS.plan.n_envs).state)
                 else:
                     runners['train'].reset()
