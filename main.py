@@ -111,7 +111,7 @@ def main():
     timesteps = []
 
     if FLAGS.ckpt.model_load:
-        saver.load_state_dict(np.load(FLAGS.ckpt.model_load)[()])
+        saver.load_state_dict(np.load(FLAGS.ckpt.model_load, allow_pickle=True)[()])
         logger.warning('Load model from %s', FLAGS.ckpt.model_load)
 
     if FLAGS.ckpt.buf_load:
@@ -136,7 +136,7 @@ def main():
             dev_set.clear()
 
         # collect data
-        recent_train_set, ep_infos = runners['collect'].run(policy, FLAGS.rollout.n_train_samples, render=False)
+        recent_train_set, ep_infos = runners['collect'].run(policy, FLAGS.rollout.n_train_samples, render=FLAGS.ckpt.render)
         add_multi_step(recent_train_set, train_set)
         add_multi_step(
             runners['dev'].run(policy, FLAGS.rollout.n_dev_samples)[0],
