@@ -318,7 +318,7 @@ class MazeEnv(gym.Env):
             for name in self.movable_blocks:
                 additional_obs.append(self.wrapped_env.get_body_com(name))
 
-        obs = np.concatenate([wrapped_obs[:3]] + additional_obs + [wrapped_obs[3:]])
+        obs = np.concatenate([wrapped_obs[3:]] + [wrapped_obs[:3]] + additional_obs)
         return np.concatenate([obs, *view, np.array([self.t * 0.001])])
 
     def reset(self) -> np.ndarray:
