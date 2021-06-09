@@ -1,0 +1,7 @@
+{"level": "info", "fmt": "log_dir = %s", "args": ["./experiments75/ant_umaze_1234"], "caller": "slbo/utils/flags.py:157", "time": "2021-02-06T18:15:18.895305"}
+{"level": "info", "fmt": "Enabling flattening... %s", "args": [["GaussianMLPPolicy_1/log_std:0", "GaussianMLPPolicy_1/Linear_1/weight:0", "GaussianMLPPolicy_1/Linear_1/bias:0", "GaussianMLPPolicy_1/Linear_1_2/weight:0", "GaussianMLPPolicy_1/Linear_1_2/bias:0", "GaussianMLPPolicy_1/Linear_2_1/weight:0", "GaussianMLPPolicy_1/Linear_2_1/bias:0"]], "caller": "lunzi/nn/flat_param.py:17", "time": "2021-02-06T18:15:21.463147"}
+{"level": "info", "fmt": "------ Starting Stage %d --------", "args": [0], "caller": "main.py:129", "time": "2021-02-06T18:15:22.561747"}
+{"level": "info", "fmt": "Tag = %s, Reward on %s (%d episodes): mean = %.6f, std = %.6f", "args": ["episode", "Real Env", 8, 0.0, 0.0], "caller": "main.py:37", "time": "2021-02-06T18:15:31.545979"}
+{"level": "info", "fmt": "[%s] is making TensorFlow callables, key = %s", "args": ["DynamicsModel", "[states actions] => [next_states]"], "caller": "lunzi/nn/module.py:71", "time": "2021-02-06T18:15:31.548974"}
+{"level": "info", "fmt": "[%s] is making TensorFlow callables, key = %s", "args": ["RandomNet", "[states actions] => [features]"], "caller": "lunzi/nn/module.py:71", "time": "2021-02-06T18:15:31.589263"}
+{"level": "info", "fmt": "Tag = %s, Reward on %s (%d episodes): mean = %.6f, std = %.6f", "args": ["episode", "Virt Env", 8, -7.28487681398867, 0.14328466178487784], "caller": "main.py:37", "time": "2021-02-06T18:15:35.558544"}

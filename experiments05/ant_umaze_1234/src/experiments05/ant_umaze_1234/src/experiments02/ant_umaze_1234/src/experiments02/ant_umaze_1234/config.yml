@@ -1,0 +1,76 @@
+OUNoise:
+  sigma: 0.3
+  theta: 0.15
+PPO:
+  clip_range: 0.2
+  ent_coef: 0.005
+  lr: 0.0003
+  n_minibatches: 32
+  n_opt_epochs: 10
+TRPO:
+  cg_damping: 0.1
+  ent_coef: 0
+  max_kl: 0.01
+  n_cg_iters: 10
+  n_vf_iters: 5
+  vf_lr: 0.001
+algorithm: OLBO
+ckpt:
+  base: /tmp/mbrl/logs
+  buf_load: null
+  buf_load_index: 0
+  model_load: null
+  n_save_stages: 10
+  policy_load: null
+  warm_up: null
+commit: 7315421ee85a3e3a88f7b5e93c10320b95aa84c5
+env:
+  id: AntUMaze-v1
+log_dir: ./experiments02/ant_umaze_1234
+model:
+  G_coef: 0.5
+  dev_batch_size: 512
+  hidden_sizes:
+  - 500
+  - 500
+  loss: L2
+  lr: 0.001
+  multi_step: 2
+  optimizer: Adam
+  train_batch_size: 128
+  validation_freq: 1
+  weight_decay: 1.0e-05
+pc:
+  bonus_scale: 0.2
+  bonus_stop_time: 30
+  lamb: 0.01
+plan:
+  max_steps: 1000
+  n_envs: 4
+  n_trpo_samples: 4000
+policy:
+  hidden_sizes:
+  - 32
+  - 32
+  init_std: 1.0
+rollout:
+  max_buf_size: 100000
+  n_dev_samples: 4000
+  n_test_samples: 10000
+  n_train_samples: 4000
+  normalizer: policy
+run_id: null
+runner:
+  gamma: 0.99
+  lambda_: 0.95
+  max_steps: 1000
+seed: 1234
+slbo:
+  n_evaluate_iters: 5
+  n_iters: 20
+  n_model_iters: 100
+  n_policy_iters: 40
+  n_stages: 50
+  opt_model: false
+  start: reset
+use_prev: true

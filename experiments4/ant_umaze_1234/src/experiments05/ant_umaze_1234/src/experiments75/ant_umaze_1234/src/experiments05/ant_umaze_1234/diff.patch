@@ -1,0 +1,156 @@
+diff --git a/configs/env_tingwu/ant_umaze.yml b/configs/env_tingwu/ant_umaze.yml
+index f653d95..ab75516 100644
+--- a/configs/env_tingwu/ant_umaze.yml
++++ b/configs/env_tingwu/ant_umaze.yml
+@@ -5,6 +5,4 @@ runner:
+   max_steps: 1000
+ plan:
+   max_steps: 1000
+-pc: 
+-  bonus_scale: 0.1  
+ 
+diff --git a/lunzi/__pycache__/Logger.cpython-36.pyc b/lunzi/__pycache__/Logger.cpython-36.pyc
+index c62e4dc..cd65096 100644
+Binary files a/lunzi/__pycache__/Logger.cpython-36.pyc and b/lunzi/__pycache__/Logger.cpython-36.pyc differ
+diff --git a/lunzi/__pycache__/__init__.cpython-36.pyc b/lunzi/__pycache__/__init__.cpython-36.pyc
+index d0052a1..bb94071 100644
+Binary files a/lunzi/__pycache__/__init__.cpython-36.pyc and b/lunzi/__pycache__/__init__.cpython-36.pyc differ
+diff --git a/lunzi/__pycache__/config.cpython-36.pyc b/lunzi/__pycache__/config.cpython-36.pyc
+index 38e50cc..151d0cd 100644
+Binary files a/lunzi/__pycache__/config.cpython-36.pyc and b/lunzi/__pycache__/config.cpython-36.pyc differ
+diff --git a/lunzi/__pycache__/dataset.cpython-36.pyc b/lunzi/__pycache__/dataset.cpython-36.pyc
+index f5f173f..673cfda 100644
+Binary files a/lunzi/__pycache__/dataset.cpython-36.pyc and b/lunzi/__pycache__/dataset.cpython-36.pyc differ
+diff --git a/lunzi/__pycache__/stubs.cpython-36.pyc b/lunzi/__pycache__/stubs.cpython-36.pyc
+index 40d1d88..ac6d28a 100644
+Binary files a/lunzi/__pycache__/stubs.cpython-36.pyc and b/lunzi/__pycache__/stubs.cpython-36.pyc differ
+diff --git a/lunzi/nn/__pycache__/__init__.cpython-36.pyc b/lunzi/nn/__pycache__/__init__.cpython-36.pyc
+index 2082353..d28b7c9 100644
+Binary files a/lunzi/nn/__pycache__/__init__.cpython-36.pyc and b/lunzi/nn/__pycache__/__init__.cpython-36.pyc differ
+diff --git a/lunzi/nn/__pycache__/container.cpython-36.pyc b/lunzi/nn/__pycache__/container.cpython-36.pyc
+index fd7039b..f16264f 100644
+Binary files a/lunzi/nn/__pycache__/container.cpython-36.pyc and b/lunzi/nn/__pycache__/container.cpython-36.pyc differ
+diff --git a/lunzi/nn/__pycache__/flat_param.cpython-36.pyc b/lunzi/nn/__pycache__/flat_param.cpython-36.pyc
+index dc8e6f9..792725a 100644
+Binary files a/lunzi/nn/__pycache__/flat_param.cpython-36.pyc and b/lunzi/nn/__pycache__/flat_param.cpython-36.pyc differ
+diff --git a/lunzi/nn/__pycache__/layers.cpython-36.pyc b/lunzi/nn/__pycache__/layers.cpython-36.pyc
+index 3f22fba..9fd6751 100644
+Binary files a/lunzi/nn/__pycache__/layers.cpython-36.pyc and b/lunzi/nn/__pycache__/layers.cpython-36.pyc differ
+diff --git a/lunzi/nn/__pycache__/loss.cpython-36.pyc b/lunzi/nn/__pycache__/loss.cpython-36.pyc
+index 9fa218d..10a1d20 100644
+Binary files a/lunzi/nn/__pycache__/loss.cpython-36.pyc and b/lunzi/nn/__pycache__/loss.cpython-36.pyc differ
+diff --git a/lunzi/nn/__pycache__/module.cpython-36.pyc b/lunzi/nn/__pycache__/module.cpython-36.pyc
+index c0f0f4a..9088e26 100644
+Binary files a/lunzi/nn/__pycache__/module.cpython-36.pyc and b/lunzi/nn/__pycache__/module.cpython-36.pyc differ
+diff --git a/lunzi/nn/__pycache__/parameter.cpython-36.pyc b/lunzi/nn/__pycache__/parameter.cpython-36.pyc
+index 5191416..2131727 100644
+Binary files a/lunzi/nn/__pycache__/parameter.cpython-36.pyc and b/lunzi/nn/__pycache__/parameter.cpython-36.pyc differ
+diff --git a/lunzi/nn/__pycache__/patch.cpython-36.pyc b/lunzi/nn/__pycache__/patch.cpython-36.pyc
+index d535500..78a52be 100644
+Binary files a/lunzi/nn/__pycache__/patch.cpython-36.pyc and b/lunzi/nn/__pycache__/patch.cpython-36.pyc differ
+diff --git a/lunzi/nn/__pycache__/utils.cpython-36.pyc b/lunzi/nn/__pycache__/utils.cpython-36.pyc
+index 1c808e8..f1860e7 100644
+Binary files a/lunzi/nn/__pycache__/utils.cpython-36.pyc and b/lunzi/nn/__pycache__/utils.cpython-36.pyc differ
+diff --git a/run2.sh b/run2.sh
+new file mode 100644
+index 0000000..7440dc5
+--- /dev/null
++++ b/run2.sh
+@@ -0,0 +1,10 @@
++#!/usr/bin/env bash
++
++for env_name in $1; do
++    echo "=> Running environment ${env_name}"
++    #for random_seed in 1234 2314 2345 1235; do
++    for random_seed in 1234; do
++        python main.py -c configs/algos/slbo_bm_200k.yml configs/env_tingwu/${env_name}.yml \
++	    -s pc.bonus_scale=0.2 log_dir=./experiments02/${env_name}_${random_seed} seed=${random_seed}
++    done
++done
+diff --git a/run_experiments.sh b/run_experiments.sh
+index 37ce016..e3f2ad7 100644
+--- a/run_experiments.sh
++++ b/run_experiments.sh
+@@ -3,8 +3,8 @@
+ for env_name in $1; do
+     echo "=> Running environment ${env_name}"
+     #for random_seed in 1234 2314 2345 1235; do
+-    for random_seed in 19; do
++    for random_seed in 1234; do
+         python main.py -c configs/algos/slbo_bm_200k.yml configs/env_tingwu/${env_name}.yml \
+-	    -s log_dir=./experiments/${env_name}_${random_seed} seed=${random_seed}
++	    -s pc.bonus_scale=0.5 log_dir=./experiments05/${env_name}_${random_seed} seed=${random_seed}
+     done
+ done
+diff --git a/slbo/__pycache__/__init__.cpython-36.pyc b/slbo/__pycache__/__init__.cpython-36.pyc
+index 069fa36..6a33858 100644
+Binary files a/slbo/__pycache__/__init__.cpython-36.pyc and b/slbo/__pycache__/__init__.cpython-36.pyc differ
+diff --git a/slbo/__pycache__/dynamics_model.cpython-36.pyc b/slbo/__pycache__/dynamics_model.cpython-36.pyc
+index d9193cb..91423ce 100644
+Binary files a/slbo/__pycache__/dynamics_model.cpython-36.pyc and b/slbo/__pycache__/dynamics_model.cpython-36.pyc differ
+diff --git a/slbo/__pycache__/partial_envs.cpython-36.pyc b/slbo/__pycache__/partial_envs.cpython-36.pyc
+index f20520d..7ad21fc 100644
+Binary files a/slbo/__pycache__/partial_envs.cpython-36.pyc and b/slbo/__pycache__/partial_envs.cpython-36.pyc differ
+diff --git a/slbo/__pycache__/random_net.cpython-36.pyc b/slbo/__pycache__/random_net.cpython-36.pyc
+index 7688576..6e866b0 100644
+Binary files a/slbo/__pycache__/random_net.cpython-36.pyc and b/slbo/__pycache__/random_net.cpython-36.pyc differ
+diff --git a/slbo/algos/__pycache__/TRPO.cpython-36.pyc b/slbo/algos/__pycache__/TRPO.cpython-36.pyc
+index 99cdd6a..9ba8329 100644
+Binary files a/slbo/algos/__pycache__/TRPO.cpython-36.pyc and b/slbo/algos/__pycache__/TRPO.cpython-36.pyc differ
+diff --git a/slbo/algos/__pycache__/__init__.cpython-36.pyc b/slbo/algos/__pycache__/__init__.cpython-36.pyc
+index 09f2f9c..9c74708 100644
+Binary files a/slbo/algos/__pycache__/__init__.cpython-36.pyc and b/slbo/algos/__pycache__/__init__.cpython-36.pyc differ
+diff --git a/slbo/loss/__pycache__/__init__.cpython-36.pyc b/slbo/loss/__pycache__/__init__.cpython-36.pyc
+index f1c5979..cc5457b 100644
+Binary files a/slbo/loss/__pycache__/__init__.cpython-36.pyc and b/slbo/loss/__pycache__/__init__.cpython-36.pyc differ
+diff --git a/slbo/loss/__pycache__/multi_step_loss.cpython-36.pyc b/slbo/loss/__pycache__/multi_step_loss.cpython-36.pyc
+index 53c9a3d..695e469 100644
+Binary files a/slbo/loss/__pycache__/multi_step_loss.cpython-36.pyc and b/slbo/loss/__pycache__/multi_step_loss.cpython-36.pyc differ
+diff --git a/slbo/policies/__pycache__/__init__.cpython-36.pyc b/slbo/policies/__pycache__/__init__.cpython-36.pyc
+index a98e999..0f2ff6d 100644
+Binary files a/slbo/policies/__pycache__/__init__.cpython-36.pyc and b/slbo/policies/__pycache__/__init__.cpython-36.pyc differ
+diff --git a/slbo/policies/__pycache__/gaussian_mlp_policy.cpython-36.pyc b/slbo/policies/__pycache__/gaussian_mlp_policy.cpython-36.pyc
+index b355a90..3f0a156 100644
+Binary files a/slbo/policies/__pycache__/gaussian_mlp_policy.cpython-36.pyc and b/slbo/policies/__pycache__/gaussian_mlp_policy.cpython-36.pyc differ
+diff --git a/slbo/utils/__pycache__/OU_noise.cpython-36.pyc b/slbo/utils/__pycache__/OU_noise.cpython-36.pyc
+index 5819e5d..bdfb380 100644
+Binary files a/slbo/utils/__pycache__/OU_noise.cpython-36.pyc and b/slbo/utils/__pycache__/OU_noise.cpython-36.pyc differ
+diff --git a/slbo/utils/__pycache__/__init__.cpython-36.pyc b/slbo/utils/__pycache__/__init__.cpython-36.pyc
+index 0e85b1e..9df4fd9 100644
+Binary files a/slbo/utils/__pycache__/__init__.cpython-36.pyc and b/slbo/utils/__pycache__/__init__.cpython-36.pyc differ
+diff --git a/slbo/utils/__pycache__/average_meter.cpython-36.pyc b/slbo/utils/__pycache__/average_meter.cpython-36.pyc
+index 1bc0297..7fa8339 100644
+Binary files a/slbo/utils/__pycache__/average_meter.cpython-36.pyc and b/slbo/utils/__pycache__/average_meter.cpython-36.pyc differ
+diff --git a/slbo/utils/__pycache__/dataset.cpython-36.pyc b/slbo/utils/__pycache__/dataset.cpython-36.pyc
+index 0cc5d73..46a212c 100644
+Binary files a/slbo/utils/__pycache__/dataset.cpython-36.pyc and b/slbo/utils/__pycache__/dataset.cpython-36.pyc differ
+diff --git a/slbo/utils/__pycache__/flags.cpython-36.pyc b/slbo/utils/__pycache__/flags.cpython-36.pyc
+index dfd7feb..193bff4 100644
+Binary files a/slbo/utils/__pycache__/flags.cpython-36.pyc and b/slbo/utils/__pycache__/flags.cpython-36.pyc differ
+diff --git a/slbo/utils/__pycache__/multi_layer_perceptron.cpython-36.pyc b/slbo/utils/__pycache__/multi_layer_perceptron.cpython-36.pyc
+index ae136c1..eceaef9 100644
+Binary files a/slbo/utils/__pycache__/multi_layer_perceptron.cpython-36.pyc and b/slbo/utils/__pycache__/multi_layer_perceptron.cpython-36.pyc differ
+diff --git a/slbo/utils/__pycache__/normalizer.cpython-36.pyc b/slbo/utils/__pycache__/normalizer.cpython-36.pyc
+index 8c67648..574fc2b 100644
+Binary files a/slbo/utils/__pycache__/normalizer.cpython-36.pyc and b/slbo/utils/__pycache__/normalizer.cpython-36.pyc differ
+diff --git a/slbo/utils/__pycache__/np_utils.cpython-36.pyc b/slbo/utils/__pycache__/np_utils.cpython-36.pyc
+index e1f3150..d9d1d69 100644
+Binary files a/slbo/utils/__pycache__/np_utils.cpython-36.pyc and b/slbo/utils/__pycache__/np_utils.cpython-36.pyc differ
+diff --git a/slbo/utils/__pycache__/pc_utils.cpython-36.pyc b/slbo/utils/__pycache__/pc_utils.cpython-36.pyc
+index 0e894f3..b76bb46 100644
+Binary files a/slbo/utils/__pycache__/pc_utils.cpython-36.pyc and b/slbo/utils/__pycache__/pc_utils.cpython-36.pyc differ
+diff --git a/slbo/utils/__pycache__/runner.cpython-36.pyc b/slbo/utils/__pycache__/runner.cpython-36.pyc
+index 2678071..cce1028 100644
+Binary files a/slbo/utils/__pycache__/runner.cpython-36.pyc and b/slbo/utils/__pycache__/runner.cpython-36.pyc differ
+diff --git a/slbo/utils/__pycache__/tf_utils.cpython-36.pyc b/slbo/utils/__pycache__/tf_utils.cpython-36.pyc
+index 47606c4..59378e0 100644
+Binary files a/slbo/utils/__pycache__/tf_utils.cpython-36.pyc and b/slbo/utils/__pycache__/tf_utils.cpython-36.pyc differ
+diff --git a/slbo/utils/__pycache__/truncated_normal.cpython-36.pyc b/slbo/utils/__pycache__/truncated_normal.cpython-36.pyc
+index 6d8d1b4..a615a74 100644
+Binary files a/slbo/utils/__pycache__/truncated_normal.cpython-36.pyc and b/slbo/utils/__pycache__/truncated_normal.cpython-36.pyc differ
+diff --git a/slbo/v_function/__pycache__/__init__.cpython-36.pyc b/slbo/v_function/__pycache__/__init__.cpython-36.pyc
+index a38ef07..5932be7 100644
+Binary files a/slbo/v_function/__pycache__/__init__.cpython-36.pyc and b/slbo/v_function/__pycache__/__init__.cpython-36.pyc differ
+diff --git a/slbo/v_function/__pycache__/mlp_v_function.cpython-36.pyc b/slbo/v_function/__pycache__/mlp_v_function.cpython-36.pyc
+index dba380d..06cd147 100644
+Binary files a/slbo/v_function/__pycache__/mlp_v_function.cpython-36.pyc and b/slbo/v_function/__pycache__/mlp_v_function.cpython-36.pyc differ
