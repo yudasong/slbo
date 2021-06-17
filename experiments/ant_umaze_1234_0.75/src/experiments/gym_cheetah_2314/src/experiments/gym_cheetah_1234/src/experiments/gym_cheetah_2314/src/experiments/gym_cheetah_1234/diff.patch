@@ -1,0 +1,101 @@
+diff --git a/.gitignore b/.gitignore
+index b53411a..b2158d3 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -28,7 +28,8 @@ share/python-wheels/
+ MANIFEST
+ vendor/
+ rllab/
+-tmp
++tmp/
++log/
+ # PyInstaller
+ #  Usually these files are written by a python script from a template
+ #  before PyInstaller builds the exe, so as to inject date/other infos into it.
+diff --git a/configs/algos/slbo_bm_200k.yml b/configs/algos/slbo_bm_200k.yml
+index f06ab74..dcf3777 100644
+--- a/configs/algos/slbo_bm_200k.yml
++++ b/configs/algos/slbo_bm_200k.yml
+@@ -4,7 +4,7 @@ model:
+   dev_batch_size: 512
+   train_batch_size: 128
+ slbo:
+-  n_stages: 20
++  n_stages: 100
+   n_iters: 20
+   n_model_iters: 100
+   n_policy_iters: 40
+diff --git a/main.py b/main.py
+index 6262ea2..3e25d8b 100644
+--- a/main.py
++++ b/main.py
+@@ -66,7 +66,7 @@ def main():
+ 
+     policy = GaussianMLPPolicy(dim_state, dim_action, normalizer=normalizers.state, **FLAGS.policy.as_dict())
+     # batched noises
+-    noise = OUNoise(env.action_space, theta=FLAGS.OUNoise.theta, sigma=FLAGS.OUNoise.sigma, shape=(1, dim_action))
++    #noise = OUNoise(env.action_space, theta=FLAGS.OUNoise.theta, sigma=FLAGS.OUNoise.sigma, shape=(1, dim_action))
+     vfn = MLPVFunction(dim_state, [64, 64], normalizers.state)
+     model = DynamicsModel(dim_state, dim_action, normalizers, FLAGS.model.hidden_sizes)
+     random_net = RandomNet(dim_state, dim_action, normalizers, FLAGS.model.hidden_sizes)
+@@ -121,10 +121,10 @@ def main():
+             dev_set.clear()
+ 
+         # collect data
+-        recent_train_set, ep_infos = runners['collect'].run(noise.make(policy), FLAGS.rollout.n_train_samples)
++        recent_train_set, ep_infos = runners['collect'].run(policy, FLAGS.rollout.n_train_samples)
+         add_multi_step(recent_train_set, train_set)
+         add_multi_step(
+-            runners['dev'].run(noise.make(policy), FLAGS.rollout.n_dev_samples)[0],
++            runners['dev'].run(policy, FLAGS.rollout.n_dev_samples)[0],
+             dev_set,
+         )
+ 
+@@ -149,7 +149,7 @@ def main():
+         virt_env.update_cov(recent_train_set.state,recent_train_set.action)
+ 
+         if T == 50:
+-            max_ent_coef = 0.
++            virt_env.bonus_scale = 0.
+ 
+         for i in range(FLAGS.slbo.n_iters):
+             if i % FLAGS.slbo.n_evaluate_iters == 0 and i != 0:
+diff --git a/run_experiments.sh b/run_experiments.sh
+index d9e0d30..19a7312 100644
+--- a/run_experiments.sh
++++ b/run_experiments.sh
+@@ -4,6 +4,6 @@ for env_name in $1; do
+     echo "=> Running environment ${env_name}"
+     for random_seed in 1234 2314 2345 1235; do
+         python main.py -c configs/algos/slbo_bm_200k.yml configs/env_tingwu/${env_name}.yml \
+-	    -s log_dir=experiments/${env_name}_${random_seed} seed=${random_seed}
++	    -s log_dir=./experiments/${env_name}_${random_seed} seed=${random_seed}
+     done
+ done
+diff --git a/slbo/utils/__pycache__/flags.cpython-36.pyc b/slbo/utils/__pycache__/flags.cpython-36.pyc
+index b452ad4..038cf5b 100644
+Binary files a/slbo/utils/__pycache__/flags.cpython-36.pyc and b/slbo/utils/__pycache__/flags.cpython-36.pyc differ
+diff --git a/slbo/utils/flags.py b/slbo/utils/flags.py
+index 895554b..60e8e11 100644
+--- a/slbo/utils/flags.py
++++ b/slbo/utils/flags.py
+@@ -30,7 +30,7 @@ class FLAGS(BaseFLAGS):
+         start = 'reset'  # possibly 'buffer'
+ 
+     class plan(BaseFLAGS):
+-        max_steps = 500
++        max_steps = 1000
+         n_envs = None
+         n_trpo_samples = 4000
+ 
+@@ -45,8 +45,8 @@ class FLAGS(BaseFLAGS):
+ 
+     class rollout(BaseFLAGS):
+         normalizer = 'policy'
+-        max_buf_size = 200000
+-        n_train_samples = 10000
++        max_buf_size = 100000
++        n_train_samples = 2000
+         n_dev_samples = 0
+         n_test_samples = 10000
+ 

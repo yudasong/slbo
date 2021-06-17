@@ -1,0 +1,22 @@
+diff --git a/configs/algos/slbo_bm_1m.yml b/configs/algos/slbo_bm_1m.yml
+index 1688c97..0f391e2 100644
+--- a/configs/algos/slbo_bm_1m.yml
++++ b/configs/algos/slbo_bm_1m.yml
+@@ -11,4 +11,4 @@ slbo:
+ TRPO:
+   ent_coef: 0
+ rollout:
+-  n_train_samples: 5000
++  n_train_samples: 10000
+diff --git a/slbo/__pycache__/partial_envs.cpython-36.pyc b/slbo/__pycache__/partial_envs.cpython-36.pyc
+index f20520d..f82b8ca 100644
+Binary files a/slbo/__pycache__/partial_envs.cpython-36.pyc and b/slbo/__pycache__/partial_envs.cpython-36.pyc differ
+diff --git a/slbo/utils/__pycache__/flags.cpython-36.pyc b/slbo/utils/__pycache__/flags.cpython-36.pyc
+index dfd7feb..f2723f2 100644
+Binary files a/slbo/utils/__pycache__/flags.cpython-36.pyc and b/slbo/utils/__pycache__/flags.cpython-36.pyc differ
+diff --git a/slbo/utils/__pycache__/pc_utils.cpython-36.pyc b/slbo/utils/__pycache__/pc_utils.cpython-36.pyc
+index 0e894f3..7785c1f 100644
+Binary files a/slbo/utils/__pycache__/pc_utils.cpython-36.pyc and b/slbo/utils/__pycache__/pc_utils.cpython-36.pyc differ
+diff --git a/slbo/utils/__pycache__/runner.cpython-36.pyc b/slbo/utils/__pycache__/runner.cpython-36.pyc
+index 2678071..4c1d546 100644
+Binary files a/slbo/utils/__pycache__/runner.cpython-36.pyc and b/slbo/utils/__pycache__/runner.cpython-36.pyc differ
