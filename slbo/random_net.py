@@ -33,9 +33,9 @@ class RandomNet(MultiLayerPerceptron):
     def forward(self, states, actions):
         assert actions.shape[-1] == self.dim_action
         #norm_states = self.normalizers.state(states)
-        inputs = tf.concat([self.normalizers.state(states)[:,:2],
-            tf.zeros_like(self.normalizers.state(states)[:,2:]), actions.clip_by_value(-1., 1.)], axis=1)
-
+        #inputs = tf.concat([self.normalizers.state(states)[:,:2],
+        #    tf.zeros_like(self.normalizers.state(states)[:,2:]), actions.clip_by_value(-1., 1.)], axis=1)
+        inputs = tf.concat([self.normalizers.state(states), actions.clip_by_value(-1., 1.)], axis=1)
         #inputs[:,2:].assign(0)
 
         features = super().forward(inputs)
