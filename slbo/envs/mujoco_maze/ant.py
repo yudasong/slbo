@@ -64,10 +64,13 @@ class AntEnv(AgentModel):
         forward_reward = self._forward_reward(xy_pos_before)
         ctrl_cost = self._ctrl_cost_weight * np.square(action).sum()
 
+        state = self._get_obs()
+        notdone = state[2] >= 0.2 and state[2] <= 1.0
+
         return (
-            self._get_obs(),
+            state,
             self._forward_reward_weight * forward_reward - ctrl_cost,
-            False,
+            not notdone,
             dict(reward_forward=forward_reward, reward_ctrl=-ctrl_cost),
         )
 

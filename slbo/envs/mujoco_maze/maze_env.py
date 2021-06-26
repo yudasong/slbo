@@ -377,7 +377,7 @@ class MazeEnv(gym.Env):
         if self.wrapped_env.MANUAL_COLLISION:
             old_pos = self.wrapped_env.get_xy()
             old_objballs = self._objball_positions()
-            inner_next_obs, inner_reward, _, info = self.wrapped_env.step(action)
+            inner_next_obs, inner_reward, inner_done, info = self.wrapped_env.step(action)
             new_pos = self.wrapped_env.get_xy()
             new_objballs = self._objball_positions()
             # Checks that the new_position is in the wall
@@ -399,11 +399,11 @@ class MazeEnv(gym.Env):
                     idx = self.wrapped_env.model.body_name2id(name)
                     self.wrapped_env.data.xipos[idx][:2] = pos
         else:
-            inner_next_obs, inner_reward, _, info = self.wrapped_env.step(action)
+            inner_next_obs, inner_reward, inner_done, info = self.wrapped_env.step(action)
         next_obs = self._get_obs()
         inner_reward = self._inner_reward_scaling * inner_reward
         outer_reward = self._task.reward(next_obs)
-        done = self._task.termination(next_obs)
+        done = self._task.termination(next_obs) or inner_done
         info["position"] = self.wrapped_env.get_xy()
         return next_obs, inner_reward + outer_reward, done, info
 
@@ -414,7 +414,8 @@ class MazeEnv(gym.Env):
         dones = []
         for i in range(len(next_states)):
             rewards.append(self._task.reward(next_states[i]))
-            dones.append(self._task.termination(next_states[i]))
+            inner_done = not (next_states[i][2] >= 0.2 and next_states[i][2] <= 1.0)
+            dones.append(self._task.termination(next_states[i]) or inner_done)
         inner_rewards = np.linalg.norm((states[:,:2] - next_states[:,:2])/self.wrapped_env.dt,axis=-1)
         reward_ctrl = self.wrapped_env._ctrl_cost_weight * np.sum(np.square(actions), axis=-1)
         #print(inner_.rewards)
