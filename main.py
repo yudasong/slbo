@@ -14,6 +14,7 @@ from slbo.utils.OU_noise import OUNoise
 from slbo.utils.normalizer import Normalizers
 from slbo.utils.tf_utils import get_tf_config
 from slbo.utils.runner import Runner
+from slbo.utils.maze_util import Coverage
 from slbo.policies.gaussian_mlp_policy import GaussianMLPPolicy
 from slbo.envs.virtual_env import VirtualEnv
 from slbo.dynamics_model import DynamicsModel
@@ -30,7 +31,7 @@ def evaluate(settings, tag):
         runner.reset()
         _, ep_infos = runner.run(policy, FLAGS.rollout.n_test_samples)
         if name == 'Real Env':
-            returns = np.array([ep_info['success'] for ep_info in ep_infos])
+            returns = np.array([ep_info['return'] for ep_info in ep_infos])
         else:
             returns = np.array([ep_info['return'] for ep_info in ep_infos])
         logger.info('Tag = %s, Reward on %s (%d episodes): mean = %.6f, std = %.6f', tag, name,
@@ -66,6 +67,8 @@ def main():
     dim_action = int(np.prod(env.action_space.shape))
 
     env.verify()
+
+    coverage = Coverage()
 
     normalizers = Normalizers(dim_action=dim_action, dim_state=dim_state)
 
@@ -128,8 +131,8 @@ def main():
     for T in range(FLAGS.slbo.n_stages):
         logger.info('------ Starting Stage %d --------', T)
         eval_returns = evaluate(settings, 'episode')
-        eval_real_returns.append(eval_returns[0])
-        timesteps.append(T*FLAGS.rollout.n_train_samples)
+        #eval_real_returns.append(eval_returns[0])
+        #timesteps.append(T*FLAGS.rollout.n_train_samples)
 
         if not FLAGS.use_prev:
             train_set.clear()
@@ -144,9 +147,12 @@ def main():
         )
 
         returns = np.array([ep_info['return'] for ep_info in ep_infos])
+        cov = coverage.rate_buffer(recent_train_set.state)
+        eval_real_returns.append(cov)
+        timesteps.append(T*FLAGS.rollout.n_train_samples)
 
         if len(returns) > 0:
-            logger.info("episode: %s", np.mean(returns))
+            logger.info("episode: %s", cov)
 
         if T == 0:  # check
             samples = train_set.sample_multi_step(100, 1, FLAGS.model.multi_step)
@@ -222,6 +228,8 @@ def main():
         if T % FLAGS.ckpt.n_save_stages == 0:
             np.save(f'{FLAGS.log_dir}/stage-{T}', saver.state_dict())
             np.save(f'{FLAGS.log_dir}/final', saver.state_dict())
+            np.save(f'{FLAGS.log_dir}/eval_real_returns', eval_real_returns)
+            np.save(f'{FLAGS.log_dir}/timesteps', timesteps)
         if FLAGS.ckpt.n_save_stages == 1:
             pickle.dump(recent_train_set, open(f'{FLAGS.log_dir}/stage-{T}.inc-buf.pkl', 'wb'))
 

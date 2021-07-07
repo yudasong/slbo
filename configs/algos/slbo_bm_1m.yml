@@ -4,7 +4,7 @@ model:
   dev_batch_size: 512
   train_batch_size: 128
 slbo:
-  n_stages: 300
+  n_stages: 100
   n_iters: 20
   n_model_iters: 100
   n_policy_iters: 40
@@ -12,3 +12,4 @@ TRPO:
   ent_coef: 0
 rollout:
   n_train_samples: 10000
+  

@@ -11,6 +11,7 @@ from slbo.envs.bm_envs.gym.half_cheetah import HalfCheetahEnv
 from slbo.envs.bm_envs.gym.walker2d import Walker2dEnv
 # from slbo.envs.mujoco.humanoid_env import HumanoidEnv
 from slbo.envs.bm_envs.gym.ant import AntEnv
+from slbo.envs.bm_envs.gym.ant_umaze import AntUmazeEnv
 from slbo.envs.bm_envs.gym.hopper import HopperEnv
 from slbo.envs.bm_envs.gym.swimmer import SwimmerEnv
 from slbo.envs.bm_envs.gym.reacher import ReacherEnv
@@ -43,7 +44,7 @@ from slbo.envs.robotics.hand.manipulate import HandEggEnv
 
 
 def make_env(id: str):
-    if "Point" in id or "Ant" in id:
+    if "Maze" in id:
         env = gym.make(id)
         env.seed(np.random.randint(2**60))
     else:
@@ -54,6 +55,7 @@ def make_env(id: str):
             'HalfCheetah': HalfCheetahEnv,
             'Walker2D': Walker2dEnv,
             'Ant': AntEnv,
+            'AntUmaze': AntUmazeEnv,
             'Hopper': HopperEnv,
             'Swimmer': SwimmerEnv,
             'FixedSwimmer': gym_fswimmer.fixedSwimmerEnv,

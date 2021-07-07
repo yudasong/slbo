@@ -402,10 +402,10 @@ class MazeEnv(gym.Env):
             inner_next_obs, inner_reward, inner_done, info = self.wrapped_env.step(action)
         next_obs = self._get_obs()
         inner_reward = self._inner_reward_scaling * inner_reward
-        outer_reward = self._task.reward(next_obs)
+        #outer_reward = self._task.reward(next_obs)
         done = self._task.termination(next_obs) or inner_done
         info["position"] = self.wrapped_env.get_xy()
-        return next_obs, inner_reward + outer_reward, done, info
+        return next_obs, inner_reward, done, info
 
     def mb_step(self, states, actions, next_states):
         # returns rewards and dones
@@ -413,7 +413,7 @@ class MazeEnv(gym.Env):
         rewards = []
         dones = []
         for i in range(len(next_states)):
-            rewards.append(self._task.reward(next_states[i]))
+            rewards.append(0)
             inner_done = not (next_states[i][2] >= 0.2 and next_states[i][2] <= 1.0)
             dones.append(self._task.termination(next_states[i]) or inner_done)
         inner_rewards = np.linalg.norm((states[:,:2] - next_states[:,:2])/self.wrapped_env.dt,axis=-1)

@@ -49,7 +49,7 @@ class FLAGS(BaseFLAGS):
         max_buf_size = 100000
         n_train_samples = 4000
         n_dev_samples = 0
-        n_test_samples = 10000
+        n_test_samples = 5000
 
         @classmethod
         def finalize(cls):
