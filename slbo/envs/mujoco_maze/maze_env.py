@@ -403,7 +403,7 @@ class MazeEnv(gym.Env):
         next_obs = self._get_obs()
         inner_reward = self._inner_reward_scaling * inner_reward
         #outer_reward = self._task.reward(next_obs)
-        done = self._task.termination(next_obs) or inner_done
+        done = inner_done
         info["position"] = self.wrapped_env.get_xy()
         return next_obs, inner_reward, done, info
 
@@ -415,7 +415,7 @@ class MazeEnv(gym.Env):
         for i in range(len(next_states)):
             rewards.append(0)
             inner_done = not (next_states[i][2] >= 0.2 and next_states[i][2] <= 1.0)
-            dones.append(self._task.termination(next_states[i]) or inner_done)
+            dones.append(inner_done)
         inner_rewards = np.linalg.norm((states[:,:2] - next_states[:,:2])/self.wrapped_env.dt,axis=-1)
         reward_ctrl = self.wrapped_env._ctrl_cost_weight * np.sum(np.square(actions), axis=-1)
         #print(inner_.rewards)
